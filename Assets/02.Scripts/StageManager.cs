@@ -12,12 +12,13 @@ public class StageManager : MonoBehaviour
       _gameManager = gameManager;
    }
    
-   public void CreateStage(StageData stageData)
+   public Stage CreateStage(StageData stageData)
    {
       List<Vector2Int> roomTree = CreateRoomTree(stageData);
 
-      CreateRooms(roomTree, stageData);
       CreatePath(roomTree, stageData);
+
+      return new Stage(stageData, CreateRooms(roomTree, stageData));
    }
 
 
@@ -56,8 +57,10 @@ public class StageManager : MonoBehaviour
       return newTree;
    }
 
-   void CreateRooms(List<Vector2Int> roomTree, StageData stageData)
+   List<Room> CreateRooms(List<Vector2Int> roomTree, StageData stageData)
    {
+      List<Room> createdRooms = new();
+      
       for (int i = 0; i < roomTree.Count; i++)
       {
          var createRoom = Instantiate(stageData.RoomPrefab);
@@ -66,7 +69,11 @@ public class StageManager : MonoBehaviour
             new Vector3(roomTree[i].x, 0, roomTree[i].y) * (stageData.RoomSize.x + stageData.PathSize.x);
 
          createRoom.transform.position = placePos;
+         
+         createdRooms.Add(createRoom);
       }
+
+      return createdRooms;
    }
 
    void CreatePath(List<Vector2Int> roomTree, StageData stageData)

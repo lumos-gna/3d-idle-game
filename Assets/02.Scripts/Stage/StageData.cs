@@ -18,7 +18,7 @@ public class StageData : ScriptableObject
     
     
     [field: Space(20f)]
-    [field: SerializeField] public GameObject RoomPrefab { get; private set; }
+    [field: SerializeField] public Room RoomPrefab { get; private set; }
     
     [field: SerializeField] public GameObject PathPrefab { get; private set; }
 }
