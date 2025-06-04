@@ -167,11 +167,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5da8bfd92db75e4785d145dd2b0d05f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomPrefab: {fileID: 4492512065197826781, guid: e19fcee1c1c2bec4bbe464551ab99173, type: 3}
-  pathPrefab: {fileID: 8017591335974890894, guid: 6e0ca870c6fbcb3468dfe8e04162a2de, type: 3}
-  maxRoomCount: 4
-  roomLength: 30
-  pathLength: 15
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -387,6 +382,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8588006bd0595d2408d89cce86e06e8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <GameData>k__BackingField: {fileID: 11400000, guid: 4098c538760341a4fa65d4d1069b2e4b, type: 2}
 --- !u!4 &1277464202
 Transform:
   m_ObjectHideFlags: 0

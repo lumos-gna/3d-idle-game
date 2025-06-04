@@ -2,27 +2,26 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class StageManager : MonoBehaviour
 {
-   [SerializeField] private GameObject roomPrefab;
-   [SerializeField] private GameObject pathPrefab;
+   private GameManager _gameManager;
 
-   [SerializeField] private int maxRoomCount;
-   
-   [SerializeField] private int roomLength;
-   [SerializeField] private int pathLength;
-   
-   private void Start()
+   public void Initialize(GameManager gameManager)
    {
-      List<Vector2Int> roomTree = CreateRoomTree();
+      _gameManager = gameManager;
+   }
+   
+   public void CreateStage(StageData stageData)
+   {
+      List<Vector2Int> roomTree = CreateRoomTree(stageData);
 
-      CreateRooms(roomTree);
-      CreatePath(roomTree);
+      CreateRooms(roomTree, stageData);
+      CreatePath(roomTree, stageData);
    }
 
-   private List<Vector2Int> CreateRoomTree()
+
+   private List<Vector2Int> CreateRoomTree(StageData stageData)
    {
       List<Vector2Int> newTree = new()
       {
@@ -37,7 +36,7 @@ public class StageManager : MonoBehaviour
          Vector2Int.up
       };
       
-      for (int count = 0; count < maxRoomCount; count++)
+      for (int count = 0; count < stageData.MaxRoomCount; count++)
       {
          for (int dirIndex = 0; dirIndex < directions4.Length; dirIndex++)
          {
@@ -57,27 +56,28 @@ public class StageManager : MonoBehaviour
       return newTree;
    }
 
-   void CreateRooms(List<Vector2Int> roomTree)
+   void CreateRooms(List<Vector2Int> roomTree, StageData stageData)
    {
       for (int i = 0; i < roomTree.Count; i++)
       {
-         var createRoom = Instantiate(roomPrefab);
+         var createRoom = Instantiate(stageData.RoomPrefab);
 
-         Vector3 placePos = new Vector3(roomTree[i].x, 0, roomTree[i].y) * (roomLength + pathLength);
+         Vector3 placePos = 
+            new Vector3(roomTree[i].x, 0, roomTree[i].y) * (stageData.RoomSize.x + stageData.PathSize.x);
 
          createRoom.transform.position = placePos;
       }
    }
 
-   void CreatePath(List<Vector2Int> roomTree)
+   void CreatePath(List<Vector2Int> roomTree, StageData stageData)
    {
       for (int i = 0; i < roomTree.Count - 1; i++)
       {
-         var createPath = Instantiate(pathPrefab);
+         var createPath = Instantiate(stageData.PathPrefab);
          
          Vector2 centerPos = (Vector2)(roomTree[i + 1] + roomTree[i])  * 0.5f;
 
-         createPath.transform.position = new Vector3(centerPos.x, 0, centerPos.y) * (roomLength + pathLength);
+         createPath.transform.position = new Vector3(centerPos.x, 0, centerPos.y) * (stageData.RoomSize.x + stageData.PathSize.x);
          
          
          Vector2 delta = roomTree[i + 1] - roomTree[i];
