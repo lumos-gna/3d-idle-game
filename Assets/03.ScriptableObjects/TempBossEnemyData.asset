@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Name>k__BackingField: 
   <Level>k__BackingField: 0
-  <IsBoss>k__BackingField: 0
+  <IsBoss>k__BackingField: 1
   <StatDatas>k__BackingField:
   - type: 0
     value: 100

@@ -1,14 +1,20 @@
 using System.Collections.Generic;
+using Unity.AI.Navigation;
 using UnityEngine;
 
 public class StageManager : MonoBehaviour
 {
+   [SerializeField] private NavMeshSurface navSurface;
  
    public Stage CreateStage(StageData stageData)
    {
       List<Vector2Int> roomTree = CreateRoomTree(stageData);
 
-      return new Stage(stageData, CreateRooms(roomTree, stageData));
+      var createdRooms = CreateRooms(roomTree, stageData);
+      
+      navSurface.BuildNavMesh();
+
+      return new Stage(stageData, createdRooms);
    }
 
 
