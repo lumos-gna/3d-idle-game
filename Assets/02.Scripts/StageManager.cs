@@ -1,22 +1,12 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class StageManager : MonoBehaviour
 {
-   private GameManager _gameManager;
-
-   public void Initialize(GameManager gameManager)
-   {
-      _gameManager = gameManager;
-   }
-   
+ 
    public Stage CreateStage(StageData stageData)
    {
       List<Vector2Int> roomTree = CreateRoomTree(stageData);
-
-      CreatePath(roomTree, stageData);
 
       return new Stage(stageData, CreateRooms(roomTree, stageData));
    }
@@ -65,34 +55,34 @@ public class StageManager : MonoBehaviour
       {
          var createRoom = Instantiate(stageData.RoomPrefab);
 
-         Vector3 placePos = 
+         createRoom.transform.position = 
             new Vector3(roomTree[i].x, 0, roomTree[i].y) * (stageData.RoomSize.x + stageData.PathSize.x);
 
-         createRoom.transform.position = placePos;
-         
          createdRooms.Add(createRoom);
+         
+         
+         
+         //Path
+         if (i < roomTree.Count - 1)
+         {
+            var createPath = Instantiate(stageData.PathPrefab);
+         
+            Vector2 centerPos = (Vector2)(roomTree[i + 1] + roomTree[i])  * 0.5f;
+
+            createPath.transform.position = new Vector3(centerPos.x, 0, centerPos.y) * (stageData.RoomSize.x + stageData.PathSize.x);
+         
+         
+            Vector2 delta = roomTree[i + 1] - roomTree[i];
+         
+            if (delta.y != 0) 
+            {
+               createPath.transform.rotation = Quaternion.Euler(0, 90f, 0);
+            }
+         }
       }
 
       return createdRooms;
    }
 
-   void CreatePath(List<Vector2Int> roomTree, StageData stageData)
-   {
-      for (int i = 0; i < roomTree.Count - 1; i++)
-      {
-         var createPath = Instantiate(stageData.PathPrefab);
-         
-         Vector2 centerPos = (Vector2)(roomTree[i + 1] + roomTree[i])  * 0.5f;
-
-         createPath.transform.position = new Vector3(centerPos.x, 0, centerPos.y) * (stageData.RoomSize.x + stageData.PathSize.x);
-         
-         
-         Vector2 delta = roomTree[i + 1] - roomTree[i];
-         
-         if (delta.y != 0) 
-         {
-            createPath.transform.rotation = Quaternion.Euler(0, 90f, 0);
-         }
-      }
-   }
+  
 }

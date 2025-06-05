@@ -15,10 +15,10 @@ public class StatHandler : MonoBehaviour
 
     void InitializeStat()
     {
-        foreach (StatEntry entry in statData.Stats)
+        /*foreach (StatEntry entry in statData.Stats)
         {
             _statDict[entry.type] = entry.value;
-        }
+        }*/
     }
     
     public float GetStat(StatType statType)

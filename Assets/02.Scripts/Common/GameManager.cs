@@ -18,8 +18,6 @@ public class GameManager : Singleton<GameManager>
         EnemyManager = GetComponentInChildren<EnemyManager>();
         
         StageManager = GetComponentInChildren<StageManager>();
-        
-        StageManager.Initialize(this);
     }
 
     private void Start()
@@ -34,7 +32,9 @@ public class GameManager : Singleton<GameManager>
 
         if (targetStage != null)
         {
-            StageManager.CreateStage(targetStage);
+            Stage stage = StageManager.CreateStage(targetStage);
+            
+            EnemyManager.SpawnEnemies(stage);
         }
     }
 

@@ -1,13 +1,16 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Room : MonoBehaviour
 {
-    private int _roomIndex;
+    public int RoomIndex { get; private set; }
+    public Vector2Int Size { get; private set; }
+    public List<Enemy> Enemies { get; private set; } = new();
 
-    public void Initialize(int roomIndex)
+    public void Initialize(int roomIndex, Vector2Int roomSize)
     {
-        _roomIndex = roomIndex;
+        RoomIndex = roomIndex;
+
+        Size = roomSize;
     }
-    
-    
 }

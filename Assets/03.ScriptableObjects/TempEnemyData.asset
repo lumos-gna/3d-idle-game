@@ -9,9 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c96bddcfe96bc0a4782151c6314eb14b, type: 3}
-  m_Name: GoblinStat
+  m_Script: {fileID: 11500000, guid: e3d7bd1bc406a874ba6e649256099783, type: 3}
+  m_Name: TempEnemyData
   m_EditorClassIdentifier: 
-  stats:
+  <Name>k__BackingField: 
+  <Level>k__BackingField: 0
+  <StatDatas>k__BackingField:
   - type: 0
     value: 100
+  <Prefab>k__BackingField: {fileID: 0}
