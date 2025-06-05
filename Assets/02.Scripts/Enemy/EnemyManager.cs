@@ -6,12 +6,23 @@ public class EnemyManager : MonoBehaviour
 {
     public void SpawnEnemies(Stage stage)
     {
-        var targetEnemyDatas 
-            = GameManager.Instance.GameData.GetEnemies((data) => data.Level == stage.Level);
+        GameData gameData = GameManager.Instance.GameData;
+        
+        List<EnemyData> basicEnemyDatas 
+            = gameData.GetEnemies((data) => data.Level == stage.Level && !data.IsBoss);
+        
+        List<EnemyData> bossEnemyDatas 
+            = gameData.GetEnemies((data) => data.Level == stage.Level && data.IsBoss);
 
-        if (targetEnemyDatas.Count == 0)
+        if (basicEnemyDatas.Count == 0)
         {
             Debug.LogError("잘못된 적 데이터");
+            return;
+        }
+
+        if (bossEnemyDatas.Count == 0)
+        {
+            Debug.LogError("잘못된 보스 데이터");
             return;
         }
         
@@ -21,23 +32,29 @@ public class EnemyManager : MonoBehaviour
                 continue;
             
             Room targetRoom = stage.Rooms[roomIndex];
-
-            for (int enemyCount = 0; enemyCount < stage.MaxEnemyCount; enemyCount++)
-            {
-                EnemyData randEnemyData = targetEnemyDatas[Random.Range(0, targetEnemyDatas.Count)];
-
-                Enemy targetEnemy = Instantiate(randEnemyData.Prefab);
-                    
-                targetRoom.Enemies.Add(targetEnemy);
-            }
             
-            SetSpawnEnemyPos(targetRoom);
+            if (roomIndex < stage.Rooms.Count - 1)
+            {
+                SpawnBasicEnemy(stage, targetRoom, basicEnemyDatas);
+            }
+            else
+            {
+                SpawnBossEnemy(stage, targetRoom, basicEnemyDatas);
+            }
         }
-
     }
 
-    private void SetSpawnEnemyPos(Room room)
+    private void SpawnBasicEnemy(Stage stage, Room room, List<EnemyData> basicEnemyDatas)
     {
+        for (int enemyCount = 0; enemyCount < stage.MaxEnemyCount; enemyCount++)
+        {
+            EnemyData randEnemyData = basicEnemyDatas[Random.Range(0, basicEnemyDatas.Count)];
+
+            Enemy targetEnemy = Instantiate(randEnemyData.Prefab);
+                    
+            room.Enemies.Add(targetEnemy);
+        }
+        
         List<Vector2Int> spawnedPosList = new();
         
         while (spawnedPosList.Count < room.Enemies.Count)
@@ -58,6 +75,16 @@ public class EnemyManager : MonoBehaviour
             room.Enemies[i].transform.position 
                 = room.transform.position + new Vector3(spawnedPosList[i].x, 1, spawnedPosList[i].y);
         }
-        
+    }
+
+    private void SpawnBossEnemy(Stage stage, Room room, List<EnemyData> bossEnemyDatas)
+    {
+        EnemyData randEnemyData = bossEnemyDatas[Random.Range(0, bossEnemyDatas.Count)];
+
+        Enemy targetEnemy = Instantiate(randEnemyData.Prefab);
+                    
+        room.Enemies.Add(targetEnemy);
+
+        targetEnemy.transform.position = room.transform.position + new Vector3(0, 1, 0);
     }
 }
