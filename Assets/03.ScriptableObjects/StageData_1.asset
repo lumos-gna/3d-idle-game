@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Level>k__BackingField: 0
   <MaxRoomCount>k__BackingField: 4
-  <MaxEnemyCount>k__BackingField: 4
+  <MaxNormalEnemyCount>k__BackingField: 4
   <RoomSize>k__BackingField: {x: 30, y: 30}
   <PathSize>k__BackingField: {x: 15, y: 15}
   <RoomPrefab>k__BackingField: {fileID: 6818831243335150784, guid: e19fcee1c1c2bec4bbe464551ab99173, type: 3}
