@@ -1,16 +1,15 @@
 
 public class PlayerMoveState : IPlayerState
 {
-    public void OnEnter(PlayerController player)
-    {
-    }
-
     public void OnUpdate(PlayerController player)
     {
-       
-    }
+        Enemy targetEnemy = player.GetClosestEnemy(player.CurrentStage.CurrentRoom);
+                
+        player.UpdateMoveTarget(targetEnemy.transform);
 
-    public void OnExit(PlayerController player)
-    {
+        if (player.IsArrived())
+        {
+            targetEnemy.Die();
+        }
     }
 }

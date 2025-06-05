@@ -1,49 +1,75 @@
 using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class PlayerController : MonoBehaviour
 {
+    public Stage CurrentStage { get; private set; }
+
     private NavMeshAgent _agent;
 
-    private Stage _targetStage;
-    
-    
+
+    private Dictionary<PlayerState, IPlayerState> _playerStates;
+
+    private IPlayerState _currentState;
+
+
     private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
+
+        _playerStates = new ()
+        {
+            { PlayerState.Move , new PlayerMoveState()}
+        };
     }
     
 
     private void Update()
     {
-        if (_targetStage != null)
+        if (CurrentStage != null)
         {
-            var currentEnemies = _targetStage.CurrentRoom.Enemies;
+            var currentEnemies = CurrentStage.CurrentRoom.Enemies;
             
             if (currentEnemies.Count > 0)
             {
-                Enemy targetEnemy = GetClosestEnemy(_targetStage.CurrentRoom);
-                
-                _agent.SetDestination(targetEnemy.transform.position);
-
-                if (Input.GetKeyDown(KeyCode.Q))
-                {
-                    targetEnemy.Die();
-                }
+                _currentState.OnUpdate(this);
             }   
         }
     }
-
-
+    
+    
     public void StartStage(Stage stage)
     {
-        _targetStage = stage;
+        CurrentStage = stage;
 
-        transform.position = _targetStage.CurrentRoom.transform.position;
+        transform.position = CurrentStage.CurrentRoom.transform.position;
+
+        ChangeStage(PlayerState.Move);
     }
+
+
+    public void ChangeStage(PlayerState state)
+    {
+        if (_playerStates.ContainsKey(state))
+        {
+            _currentState = _playerStates[state];
+        }
+    }
+    
+
+    public void UpdateMoveTarget(Transform target)
+    {
+        _agent.SetDestination(target.position);
+    }
+    
+    public bool IsArrived()
+    {
+        return !_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance;
+    }
+
+
 
 
     public Enemy GetClosestEnemy(Room currentRoom)
