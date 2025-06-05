@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyManager : MonoBehaviour
 {
-    public void SpawnEnemies(Stage stage)
+    public void CreateStageEnemies(Stage stage)
     {
         GameData gameData = GameManager.Instance.GameData;
         
@@ -35,56 +35,26 @@ public class EnemyManager : MonoBehaviour
             
             if (roomIndex < stage.Rooms.Count - 1)
             {
-                SpawnBasicEnemy(stage, targetRoom, basicEnemyDatas);
+                CreateRoomEnemies(targetRoom, basicEnemyDatas);
             }
             else
             {
-                SpawnBossEnemy(stage, targetRoom, basicEnemyDatas);
+                CreateRoomEnemies(targetRoom, bossEnemyDatas);
             }
         }
     }
 
-    private void SpawnBasicEnemy(Stage stage, Room room, List<EnemyData> basicEnemyDatas)
+    private void CreateRoomEnemies(Room room, List<EnemyData> targetEnemyDatas)
     {
-        for (int enemyCount = 0; enemyCount < stage.MaxEnemyCount; enemyCount++)
+        for (int enemyCount = 0; enemyCount < room.MaxEnemyCount; enemyCount++)
         {
-            EnemyData randEnemyData = basicEnemyDatas[Random.Range(0, basicEnemyDatas.Count)];
+            EnemyData randEnemyData = targetEnemyDatas[Random.Range(0, targetEnemyDatas.Count)];
 
             Enemy targetEnemy = Instantiate(randEnemyData.Prefab);
-                    
-            room.Enemies.Add(targetEnemy);
-        }
-        
-        List<Vector2Int> spawnedPosList = new();
-        
-        while (spawnedPosList.Count < room.Enemies.Count)
-        {
-            Vector2Int spawnPos 
-                = new Vector2Int(
-                    Random.Range(room.Size.x/2 * -1 + 1, room.Size.x/2 - 1), 
-                    Random.Range(room.Size.y/2 * -1 + 1, room.Size.y/2 - 1));
             
-            if (!spawnedPosList.Contains(spawnPos))
-            {
-                spawnedPosList.Add(spawnPos);
-            }
-        }
-
-        for (int i = 0; i < room.Enemies.Count; i++)
-        {
-            room.Enemies[i].transform.position 
-                = room.transform.position + new Vector3(spawnedPosList[i].x, 1, spawnedPosList[i].y);
-        }
-    }
-
-    private void SpawnBossEnemy(Stage stage, Room room, List<EnemyData> bossEnemyDatas)
-    {
-        EnemyData randEnemyData = bossEnemyDatas[Random.Range(0, bossEnemyDatas.Count)];
-
-        Enemy targetEnemy = Instantiate(randEnemyData.Prefab);
+            targetEnemy.Init(randEnemyData);
                     
-        room.Enemies.Add(targetEnemy);
-
-        targetEnemy.transform.position = room.transform.position + new Vector3(0, 1, 0);
+            room.AddEnemy(targetEnemy);
+        }
     }
 }

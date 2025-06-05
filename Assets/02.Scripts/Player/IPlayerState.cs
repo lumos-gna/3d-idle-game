@@ -1,18 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
-public class IPlayerState : MonoBehaviour
+public interface IPlayerState
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    void OnEnter(PlayerController player);
+    void OnUpdate(PlayerController player);
+    void OnExit(PlayerController player);
 }

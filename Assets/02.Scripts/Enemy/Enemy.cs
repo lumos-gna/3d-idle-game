@@ -1,18 +1,80 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.Events;
 
 public class Enemy : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public event UnityAction<Enemy> OnDeath;
+
+    public EnemyData EnemyData { get; private set; }
+
+
+    [SerializeField] private float attackRange;
+    [SerializeField] private float maxAttackDelay;
+    
+    private NavMeshAgent _agent;
+    private PlayerController _player;
+    
+    private bool _isTracking;
+    private float _currentAttackDelay;
+    
+
+    private void Awake()
     {
-        
+        _agent = GetComponent<NavMeshAgent>();
+
+        _agent.stoppingDistance = attackRange;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Init(EnemyData enemyData)
     {
+        EnemyData = enemyData;
+    }
+
+
+    private void Update()
+    {
+        if (!_isTracking || _player == null) return;
+
+        float distanceToPlayer = Vector3.Distance(transform.position, _player.transform.position);
+
+        if (distanceToPlayer > _agent.stoppingDistance + 0.1f)
+        {
+            _agent.SetDestination(_player.transform.position);
+
+            _currentAttackDelay = 0;
+        }
+        else if (IsArrived())
+        {
+            _currentAttackDelay += Time.deltaTime;
+
+            if (_currentAttackDelay >= maxAttackDelay)
+            {
+                Debug.Log("공격!");
+
+                _currentAttackDelay = 0;
+            }
+        }
+    }
+
+    public void Tracking(PlayerController player)
+    {
+        _isTracking = true;
+        _player = player;
+    }
+
+    public void Die()
+    {
+        OnDeath?.Invoke(this);
         
+        Destroy(gameObject);
+    }
+    
+    private bool IsArrived()
+    {
+        return !_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance;
     }
 }

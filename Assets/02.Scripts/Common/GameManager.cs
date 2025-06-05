@@ -14,6 +14,8 @@ public class GameManager : Singleton<GameManager>
     protected override void Awake()
     {
         base.Awake();
+
+        Player = FindAnyObjectByType<PlayerController>();
         
         EnemyManager = GetComponentInChildren<EnemyManager>();
         
@@ -34,7 +36,9 @@ public class GameManager : Singleton<GameManager>
         {
             Stage stage = StageManager.CreateStage(targetStage);
             
-            EnemyManager.SpawnEnemies(stage);
+            EnemyManager.CreateStageEnemies(stage);
+            
+            Player.StartStage(stage);
         }
     }
 

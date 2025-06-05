@@ -9,7 +9,7 @@ public class StageData : ScriptableObject
     
     [field: Space(10f)]
     [field: SerializeField] public int MaxRoomCount { get; private set; }
-    [field: SerializeField] public int MaxEnemyCount { get; private set; }
+    [field: SerializeField] public int MaxNormalEnemyCount { get; private set; }
     
     
     [field: Space(10f)]
