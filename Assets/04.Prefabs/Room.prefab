@@ -230,7 +230,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdddc2c432ac4a458c77be6c12dd099a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  virtualCamera: {fileID: 5043521618851981232}
+  triggerCollider: {fileID: 8606013178763535354}
 --- !u!114 &2785559261988285653
 MonoBehaviour:
   m_ObjectHideFlags: 0

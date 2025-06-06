@@ -5,48 +5,42 @@ using UnityEngine.AI;
 
 public class PlayerController : MonoBehaviour
 {
-    public Stage CurrentStage { get; private set; }
+    public Room CurrentRoom { get; private set; }
 
     private NavMeshAgent _agent;
-
 
     private Dictionary<PlayerState, IPlayerState> _playerStates;
 
     private IPlayerState _currentState;
 
-
+    
     private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
 
         _playerStates = new ()
         {
-            { PlayerState.Move , new PlayerMoveState()}
+            { PlayerState.Move , new PlayerMoveState()},
+            { PlayerState.Combat , new PlayerCombatState()}
         };
     }
     
 
     private void Update()
     {
-        if (CurrentStage != null)
+        if (_agent.enabled && CurrentRoom != null)
         {
-            var currentEnemies = CurrentStage.CurrentRoom.Enemies;
-            
-            if (currentEnemies.Count > 0)
-            {
-                _currentState.OnUpdate(this);
-            }   
+            _currentState.OnUpdate(this);
         }
     }
     
-    
-    public void StartStage(Stage stage)
+    public void Init()
     {
-        CurrentStage = stage;
-
-        transform.position = CurrentStage.CurrentRoom.transform.position;
-
-        ChangeStage(PlayerState.Move);
+        _agent.enabled = false;
+        
+        transform.position = Vector3.zero;
+        
+        _agent.enabled = true;
     }
 
 
@@ -57,11 +51,22 @@ public class PlayerController : MonoBehaviour
             _currentState = _playerStates[state];
         }
     }
-    
 
-    public void UpdateMoveTarget(Transform target)
+    public void UpdateMove(Transform target)
     {
         _agent.SetDestination(target.position);
+    }
+
+    public void MoveToNextRoom(Room targetRoom)
+    {
+        ChangeStage(PlayerState.Move);
+
+        CurrentRoom = targetRoom;
+    }
+
+    public void EnterCombat()
+    {
+        ChangeStage(PlayerState.Combat);
     }
     
     public bool IsArrived()
@@ -70,23 +75,21 @@ public class PlayerController : MonoBehaviour
     }
 
 
-
-
-    public Enemy GetClosestEnemy(Room currentRoom)
+    public Enemy GetClosestRoomEnemy()
     {
         Enemy closestEnemy = null;
 
         float closestDist = float.MaxValue;
         
-        for (int i = 0; i < currentRoom.Enemies.Count; i++)
+        for (int i = 0; i < CurrentRoom.Enemies.Count; i++)
         {
-            float currentDist = (currentRoom.Enemies[i].transform.position - transform.position).sqrMagnitude;
+            float currentDist = (CurrentRoom.Enemies[i].transform.position - transform.position).sqrMagnitude;
             
             if (currentDist < closestDist)
             {
                 closestDist = currentDist;
 
-                closestEnemy = currentRoom.Enemies[i];
+                closestEnemy = CurrentRoom.Enemies[i];
             }
         }
         

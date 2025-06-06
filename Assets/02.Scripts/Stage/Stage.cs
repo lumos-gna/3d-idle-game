@@ -1,45 +1,103 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Stage
+public class Stage : MonoBehaviour
 {
-    public int Level { get; private set; }
-    public List<Room> Rooms { get; private set; }
-    public Room CurrentRoom { get; private set; }
+    public StageData StageData { get; private set; }
+
+    private List<Room> _roomList = new();
 
 
-    public Stage(StageData stageData,  List<Room> rooms)
+    public void Init(StageData stageData, List<EnemyData> enemyDataList, List<Vector2Int> roomCells)
     {
-        if (rooms.Count == 0)
+        StageData = stageData;
+
+        CreateRooms(stageData, roomCells);
+        
+        InitRooms(enemyDataList);
+    }
+
+    public Room GetNextRoom(Room currentRoom)
+    {
+        for (int i = 0; i < _roomList.Count; i++)
         {
-            Debug.LogError("잘못된 방 개수");
-            return;
+            if (_roomList[i] == currentRoom)
+            {
+                if (i < _roomList.Count - 1)
+                {
+                    return _roomList[i + 1];
+                }
+            }
         }
+
+        return null;
+    }
+
+    private void CreateRooms(StageData stageData, List<Vector2Int> roomCells)
+    {
+        StageData = stageData;
         
-        Level = stageData.Level;
-        
-        Rooms = rooms;
-        
-        for (int i = 0; i < Rooms.Count; i++)
+        for (int i = 0; i < roomCells.Count; i++)
         {
-            int maxEnemyCount = i == Rooms.Count - 1 ? 1 : stageData.MaxNormalEnemyCount;
+            Room createRoom = Instantiate(stageData.RoomPrefab, transform);
             
-            Rooms[i].Init(i, maxEnemyCount, stageData.RoomSize, RoomClear);
+            createRoom.transform.position =
+                new Vector3(roomCells[i].x, 0, roomCells[i].y) * (stageData.RoomSize.x + stageData.PathSize.x);
+            
+            _roomList.Add(createRoom);
+
+            //Path
+            if (i < roomCells.Count - 1)
+            {
+                var createPath = Instantiate(stageData.PathPrefab, transform);
+         
+                Vector2 centerPos = (Vector2)(roomCells[i + 1] + roomCells[i])  * 0.5f;
+
+                createPath.transform.position = new Vector3(centerPos.x, 0, centerPos.y) * (stageData.RoomSize.x + stageData.PathSize.x);
+         
+         
+                Vector2 delta = roomCells[i + 1] - roomCells[i];
+         
+                if (delta.y != 0) 
+                {
+                    createPath.transform.rotation = Quaternion.Euler(0, 90f, 0);
+                }
+            }
         }
-
-        CurrentRoom = Rooms[0];
     }
-
-    private void RoomClear()
+    
+    private void InitRooms(List<EnemyData> enemyDataList)
     {
-        if (Rooms.Count - 1 > CurrentRoom.RoomIndex)
+        for (int i = 0; i < _roomList.Count; i++)
         {
-            CurrentRoom = Rooms[CurrentRoom.RoomIndex + 1];
-        }
-        else
-        {
-            Debug.Log("스테이지 클리어");
+            List<EnemyData> roomEnemyData = null;
+            
+            if (i > 0)
+            {
+                roomEnemyData = i < _roomList.Count - 1 ? 
+                    GetRoomEnemyDataList(false, enemyDataList) :
+                    GetRoomEnemyDataList(true, enemyDataList);
+            }
+
+            _roomList[i].Init(this, roomEnemyData);
         }
     }
+    
+    private List<EnemyData> GetRoomEnemyDataList(bool isBoss, List<EnemyData> enemyDataList)
+    {
+        List<EnemyData> targetEnemytDatas = new();
+
+        for (int i = 0; i < enemyDataList.Count; i++)
+        {
+            if (enemyDataList[i].IsBoss == isBoss)
+            {
+                targetEnemytDatas.Add(enemyDataList[i]);
+            }
+        }
+
+        return targetEnemytDatas;
+    }
+    
+   
 
 }

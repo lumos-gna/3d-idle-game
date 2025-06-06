@@ -1,96 +1,118 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class Room : MonoBehaviour
 {
-    public event UnityAction OnClearedRoom;
+    public List<Enemy> Enemies => _enemyList;
+    
+    
+    private Stage _stage;
 
-    public int RoomIndex { get; private set; }
-    public int MaxEnemyCount { get; private set; }
-    
-    public List<Enemy> Enemies { get; private set; } = new();
+    private List<Enemy> _enemyList = new();
 
-    
-    private List<Vector2Int> _spawnedCells = new();
-    
-    private Vector2Int _roomSize;
-    
-    
+    private PlayerController _player;
+
+
     void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent(out PlayerController player))
         {
-            if (Enemies.Count > 0)
+            _player = player;
+            
+            if (_enemyList.Count > 0)
             {
-                for (int i = 0; i < Enemies.Count; i++)
+                for (int i = 0; i < _enemyList.Count; i++)
                 {
-                    Enemies[i].Tracking(player);
+                    _enemyList[i].Tracking(player);
                 }
+                
+                _player.EnterCombat();
             }
             else
             {
-                OnClearedRoom?.Invoke();
+                ClearRoom();
             }
         }
     }
+
+    public void Init(Stage stage, List<EnemyData> enemyDataList)
+    {
+        _stage = stage;
+
+        if (enemyDataList == null || enemyDataList.Count == 0)
+            return;
+
+        CreateEnemies(enemyDataList);
+    }
     
-    public void Init(int roomIndex, int maxEnemyCount, Vector2Int roomSize, UnityAction onClearedRoom)
+    public void OnEnemyDeath(Enemy enemy)
     {
-        RoomIndex = roomIndex;
-
-        MaxEnemyCount = maxEnemyCount;
-
-        _roomSize = roomSize;
-
-        OnClearedRoom = onClearedRoom;
-    }
-
-    public void AddEnemy(Enemy enemy)
-    {
-        Enemies.Add(enemy);
-
-        SetEnemyPos(enemy);
+        _enemyList.Remove(enemy);
         
-        enemy.OnDeath += OnEnemyDeath;
-    }
-
-
-    void OnEnemyDeath(Enemy enemy)
-    {
-        Enemies.Remove(enemy);
-
-        if (Enemies.Count == 0)
+        if (_enemyList.Count == 0)
         {
-            OnClearedRoom?.Invoke();
+            ClearRoom();
         }
     }
 
-    void SetEnemyPos(Enemy enemy)
+    private void ClearRoom()
     {
-        Vector2Int spawnPos = Vector2Int.zero;
+        var nextRoom = _stage.GetNextRoom(this);
 
-        if (enemy.EnemyData.IsBoss)
+        if (nextRoom == null)
         {
-            enemy.transform.position = transform.position;
+            GameManager.Instance.StartNextStage();
         }
         else
         {
-            while (true)
-            {
-                spawnPos = new Vector2Int(
-                    Random.Range(_roomSize.x/2 * -1 + 1, _roomSize.x/2 - 1), 
-                    Random.Range(_roomSize.y/2 * -1 + 1, _roomSize.y/2 - 1));
-            
-                if (!_spawnedCells.Contains(spawnPos))
-                {
-                    _spawnedCells.Add(spawnPos);
-                
-                    enemy.transform.position = transform.position + new Vector3(spawnPos.x, 1, spawnPos.y);
+            _player.MoveToNextRoom(nextRoom);
+        }
+    }
+  
+    private void CreateEnemies(List<EnemyData> targetEnemyDatas)
+    {
+        Vector2Int spawnPos = Vector2Int.zero;
 
-                    break;
+        List<Vector2Int> _spawnedCells = new();
+        
+        for (int index = 0; index < _stage.StageData.MaxNormalEnemyCount; index++)
+        {
+            EnemyData randEnemyData = targetEnemyDatas[Random.Range(0, targetEnemyDatas.Count)];
+
+            Enemy targetEnemy = Instantiate(randEnemyData.Prefab, _stage.transform);
+            
+            targetEnemy.Init(randEnemyData, this);
+
+            _enemyList.Add(targetEnemy);
+
+            if (randEnemyData.IsBoss)
+            {
+                targetEnemy.transform.position = transform.position + Vector3.up;
+
+                return;
+            }
+            else
+            {
+                while (true)
+                {
+                    var roomSize = _stage.StageData.RoomSize;
+                
+                    spawnPos = new Vector2Int(
+                        Random.Range(roomSize.x/2 * -1 + 1, roomSize.x/2 - 1), 
+                        Random.Range(roomSize.y/2 * -1 + 1, roomSize.y/2 - 1));
+            
+                    
+                    if (!_spawnedCells.Contains(spawnPos))
+                    {
+                        _spawnedCells.Add(spawnPos);
+                
+                        targetEnemy.transform.position = transform.position + new Vector3(spawnPos.x, 1, spawnPos.y);
+                        break;
+                    }
                 }
             }
         }
     }
+
+   
 }

@@ -5,27 +5,37 @@ using UnityEngine;
 public class StageManager : MonoBehaviour
 {
    [SerializeField] private NavMeshSurface navSurface;
- 
-   public Stage CreateStage(StageData stageData)
-   {
-      List<Vector2Int> roomTree = CreateRoomTree(stageData);
 
-      var createdRooms = CreateRooms(roomTree, stageData);
+   private Stage _currentStage;
+
+   public void CreateStage(StageData stageData, List<EnemyData> enemyDataList)
+   {
+      if (_currentStage != null)
+      {
+         Destroy(_currentStage.gameObject);
+      }
+      
+      List<Vector2Int> roomCells = CreateRoomCells(stageData);
+      
+
+      GameObject createObject = new GameObject("Stage");
+      
+      _currentStage = createObject.AddComponent<Stage>();
+      
+      _currentStage.Init(stageData, enemyDataList, roomCells);
+      
       
       navSurface.BuildNavMesh();
-
-      return new Stage(stageData, createdRooms);
    }
 
-
-   private List<Vector2Int> CreateRoomTree(StageData stageData)
+   private List<Vector2Int> CreateRoomCells(StageData stageData)
    {
-      List<Vector2Int> newTree = new()
+      List<Vector2Int> newCells = new()
       {
          Vector2Int.zero
       };
       
-      Vector2Int[] directions4 = new[]
+      Vector2Int[] directions4 = 
       {
          Vector2Int.down,
          Vector2Int.left,
@@ -37,58 +47,23 @@ public class StageManager : MonoBehaviour
       {
          for (int dirIndex = 0; dirIndex < directions4.Length; dirIndex++)
          {
-            int randCount = UnityEngine.Random.Range(0, directions4.Length);
+            int randCount = Random.Range(0, directions4.Length);
             
-            Vector2Int targetNode =  newTree[^1] + directions4[randCount];
+            Vector2Int targetNode =  newCells[^1] + directions4[randCount];
 
-            if (!newTree.Contains(targetNode))
+            if (!newCells.Contains(targetNode))
             {
-               newTree.Add(targetNode);
+               newCells.Add(targetNode);
 
                break;
             }
          }
       }
 
-      return newTree;
+      return newCells;
    }
 
-   List<Room> CreateRooms(List<Vector2Int> roomTree, StageData stageData)
-   {
-      List<Room> createdRooms = new();
-      
-      for (int i = 0; i < roomTree.Count; i++)
-      {
-         var createRoom = Instantiate(stageData.RoomPrefab);
-
-         createRoom.transform.position = 
-            new Vector3(roomTree[i].x, 0, roomTree[i].y) * (stageData.RoomSize.x + stageData.PathSize.x);
-
-         createdRooms.Add(createRoom);
-         
-         
-         
-         //Path
-         if (i < roomTree.Count - 1)
-         {
-            var createPath = Instantiate(stageData.PathPrefab);
-         
-            Vector2 centerPos = (Vector2)(roomTree[i + 1] + roomTree[i])  * 0.5f;
-
-            createPath.transform.position = new Vector3(centerPos.x, 0, centerPos.y) * (stageData.RoomSize.x + stageData.PathSize.x);
-         
-         
-            Vector2 delta = roomTree[i + 1] - roomTree[i];
-         
-            if (delta.y != 0) 
-            {
-               createPath.transform.rotation = Quaternion.Euler(0, 90f, 0);
-            }
-         }
-      }
-
-      return createdRooms;
-   }
+  
 
   
 }
