@@ -8,6 +8,7 @@ public class EnemyData : ScriptableObject
 {
     [field: SerializeField] public string Name { get; private set; }
     [field: SerializeField] public int Level { get; private set; }
+    [field: SerializeField] public int DropGold { get; private set; }
     [field: SerializeField] public bool IsBoss { get; private set; }
     
     [field: Space(10f)]

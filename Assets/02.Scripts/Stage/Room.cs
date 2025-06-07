@@ -58,10 +58,10 @@ public class Room : MonoBehaviour
     private void ClearRoom()
     {
         var nextRoom = _stage.GetNextRoom(this);
-
+        
         if (nextRoom == null)
         {
-            GameManager.Instance.StartNextStage();
+            GameManager.Instance.ClearedStage();
         }
         else
         {

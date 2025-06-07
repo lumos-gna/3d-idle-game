@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
@@ -8,9 +9,10 @@ public class GameManager : Singleton<GameManager>
 
     public PlayerController Player { get; private set; }
     public StageManager StageManager { get; private set; }
+    public UIManager UIManager { get; private set; }
 
 
-    
+
     protected override void Awake()
     {
         base.Awake();
@@ -18,6 +20,8 @@ public class GameManager : Singleton<GameManager>
         Player = FindAnyObjectByType<PlayerController>();
         
         StageManager = GetComponentInChildren<StageManager>();
+
+        UIManager = GetComponentInChildren<UIManager>();
 
         GameState = new();
     }
@@ -33,42 +37,42 @@ public class GameManager : Singleton<GameManager>
     {
         if (Input.GetKeyDown(KeyCode.A))
         {
-            RestartStage();
+            StartStage(GameState.stageLevel);
         }
     }
 
 
-    public void RestartStage()
+    public void AddGold(int amount)
     {
+        GameState.gold += amount;
+        
+        UIManager.UpdateGoldText(GameState.gold);
+    }
+
+
+    public void ClearedStage()
+    {
+        var targetStageData = GameData.StageDatas.FirstOrDefault((data)=> data.Level == GameState.stageLevel + 1);
+
+        GameState.stageLevel = targetStageData == null ? GameState.stageLevel : GameState.stageLevel + 1;
+        
         StartStage(GameState.stageLevel);
     }
 
-    public void StartNextStage()
-    {
-        var targetStage = GameData.GetStage((data) => data.Level == GameState.stageLevel + 1);
-
-        if (targetStage == null)
-        {
-            RestartStage();
-        }
-        else
-        {
-            StartStage(GameState.stageLevel + 1);
-        }
-    }
     
     private void StartStage(int level)
     {
-        var targetStageData = GameData.GetStage((data) => data.Level == level);
+        var targetStageData = GameData.StageDatas.FirstOrDefault((data) => data.Level == level);
 
         if (targetStageData != null)
         {
-            var targetEnemyDataList = GameData.GetEnemies((data) => data.Level == level);
+            var targetEnemyDataList = GameData.EnemyDatas.FindAll((data) => data.Level == level);
             
             StageManager.CreateStage(targetStageData, targetEnemyDataList);
             
             Player.Init();
         }
     }
+    
 
 }

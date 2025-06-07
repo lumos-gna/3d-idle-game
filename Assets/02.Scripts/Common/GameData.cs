@@ -11,12 +11,13 @@ public class GameData : ScriptableObject
     [field: SerializeField] public List<EnemyData> EnemyDatas { get; private set; }
 
 
-    public StageData GetStage(Func<StageData, bool> condition)
+    /*
+    public StageData GetStageData(Func<StageData, bool> condition)
     {
        return StageDatas.Find((data) => condition(data));
     }
 
-    public List<EnemyData> GetEnemies(Func<EnemyData, bool> condition)
+    public List<EnemyData> GetEnemyData(Func<EnemyData, bool> condition)
     {
         List<EnemyData> enemies = new();
         
@@ -29,5 +30,5 @@ public class GameData : ScriptableObject
         }
 
         return enemies;
-    }
+    }*/
 }

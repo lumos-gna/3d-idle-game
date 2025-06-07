@@ -1,8 +1,9 @@
 using UnityEngine;
+using System.Numerics;
 
-public class GameState : MonoBehaviour
+public class GameState
 {
     public int stageLevel;
     
-    public float gold;
+    public BigInteger gold;
 }

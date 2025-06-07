@@ -73,6 +73,8 @@ public class Enemy : MonoBehaviour
         _spawnedRoom.OnEnemyDeath(this);
         
         Destroy(gameObject);
+        
+        GameManager.Instance.AddGold(EnemyData.DropGold);
     }
     
     private bool IsArrived()
