@@ -17,13 +17,15 @@ MonoBehaviour:
   - type: 0
     baseValue: 100
   - type: 1
-    baseValue: 1
+    baseValue: 100
   - type: 2
-    baseValue: 1
+    baseValue: 10
   - type: 3
     baseValue: 1
   - type: 4
-    baseValue: 2
+    baseValue: 1
+  - type: 5
+    baseValue: 5
   <Level>k__BackingField: 0
   <DropGold>k__BackingField: 5000000
   <IsBoss>k__BackingField: 1
