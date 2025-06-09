@@ -3,5 +3,5 @@
 public class StatData
 {
     public StatType type;
-    public float value;
+    public float baseValue;
 }

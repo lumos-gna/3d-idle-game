@@ -30,7 +30,7 @@ public class Room : MonoBehaviour
                     _enemyList[i].Tracking(player);
                 }
                 
-                _player.EnterCombat();
+                _player.ChangeStage(PlayerState.Combat);
             }
             else
             {
@@ -71,7 +71,9 @@ public class Room : MonoBehaviour
         }
         else
         {
-            _player.MoveToNextRoom(nextRoom);
+            _player.CurrentRoom = nextRoom;
+            _player.ChangeStage(PlayerState.Move);
+            
         }
     }
   

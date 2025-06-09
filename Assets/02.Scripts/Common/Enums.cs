@@ -3,8 +3,8 @@ public enum StatType
 {
     Health, 
     Damage, 
-    AttackSpeed, 
     MoveSpeed,
+    AttackSpeed, 
     AttackRange
 }
 
