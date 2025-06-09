@@ -19,6 +19,8 @@ public class GameManager : Singleton<GameManager>
 
         Player = FindAnyObjectByType<PlayerController>();
         
+        Player.Init(this);
+        
         StageManager = GetComponentInChildren<StageManager>();
 
         UIManager = GetComponentInChildren<UIManager>();
@@ -58,6 +60,11 @@ public class GameManager : Singleton<GameManager>
 
         GameState.stageLevel = targetStageData == null ? GameState.stageLevel : GameState.stageLevel + 1;
         
+        StartStage(GameState.stageLevel);
+    }
+
+    public void FailedStage()
+    {
         StartStage(GameState.stageLevel);
     }
 

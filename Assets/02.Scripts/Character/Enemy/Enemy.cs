@@ -6,7 +6,6 @@ public class Enemy : CharacterController
 
     private PlayerController _targetPlayer;
 
-
    
     public void Init(EnemyData enemyData, Room spawnedRoom)
     {
@@ -17,17 +16,16 @@ public class Enemy : CharacterController
         StatHandler.Init(enemyData.Stats);
     }
 
-
-    private void Update()
-    {
-        if (_targetPlayer == null) return;
-        
-        Move(_targetPlayer.transform.position, out bool isArrived);
-    }
-
-    public void Tracking(PlayerController player)
+    public void SetTargetPlayer(PlayerController player)
     {
         _targetPlayer = player;
+        
+        ChangeStage(CharacterStateType.Combat);
+    }
+
+    public override CharacterController GetTargetController()
+    {
+        return _targetPlayer != null?  _targetPlayer : null;
     }
 
     protected override void Die()

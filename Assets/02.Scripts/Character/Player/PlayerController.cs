@@ -5,58 +5,32 @@ public class PlayerController : CharacterController
 {
     [SerializeField] private CharacterData playerData;
 
-    private Dictionary<PlayerState, IPlayerState> _playerStates;
+    private GameManager _gameManager;
 
-    private IPlayerState _currentState;
-
+    private Stat _curHealth;
+    private Stat _maxHealth;
+    
     
     protected override void Awake()
     {
         base.Awake();
         
-        _playerStates = new ()
-        {
-            { PlayerState.Move , new PlayerMoveState(this)},
-            { PlayerState.Combat , new PlayerCombatState(this)}
-        };
-        
         StatHandler.Init(playerData.Stats);
-    }
-
-    private void Update()
-    {
-        _currentState?.OnUpdate();
-    }
-    
-    protected override void Die()
-    {
-    }
-  
-    
-    public void Init()
-    {
-        NavAgent.enabled = false;
         
-        transform.position = Vector3.zero;
-        
-        NavAgent.enabled = true;
-    }
-
-
-    public void ChangeStage(PlayerState state)
-    {
-        if (_playerStates.ContainsKey(state))
+        if (StatHandler.TryGetStat(StatType.CurHealth, out Stat currentHealth))
         {
-            _currentState = _playerStates[state];
+            _curHealth = currentHealth;
             
-            _currentState.OnEnter();
+            if (StatHandler.TryGetStat(StatType.MaxHealth, out Stat maxHealth))
+            {
+                _maxHealth = maxHealth;
+            }
         }
     }
-
     
-    public Enemy GetClosestRoomEnemy()
+    public override CharacterController GetTargetController()
     {
-        Enemy closestEnemy = null;
+        Enemy closerEnemy = null;
 
         float closestDist = float.MaxValue;
         
@@ -68,10 +42,32 @@ public class PlayerController : CharacterController
             {
                 closestDist = currentDist;
 
-                closestEnemy = CurrentRoom.Enemies[i];
+                closerEnemy = CurrentRoom.Enemies[i];
             }
         }
         
-        return closestEnemy;
+        return closerEnemy;
     }
+    
+    protected override void Die()
+    {
+        _gameManager.FailedStage();
+    }
+  
+    public void Init(GameManager gameManager)
+    {
+        _gameManager = gameManager;
+    }
+
+    public void StartStage()
+    {
+        NavAgent.enabled = false;
+        
+        transform.position = Vector3.zero;
+
+        _curHealth.ModifyStatValue(_maxHealth.value);
+        
+        NavAgent.enabled = true;
+    }
+
 }

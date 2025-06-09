@@ -27,7 +27,7 @@ public class Stage : MonoBehaviour
         
         InitRooms(enemyDataList);
 
-        GameManager.Instance.Player.Init();
+        GameManager.Instance.Player.StartStage();
     }
 
     public Room GetNextRoom(Room currentRoom)

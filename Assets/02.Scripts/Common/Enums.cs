@@ -1,11 +1,12 @@
 
 public enum StatType
 {
-    Health, 
+    MaxHealth,
+    CurHealth,
     Damage, 
     MoveSpeed,
     AttackSpeed, 
     AttackRange
 }
 
-public enum PlayerState { Move, Combat }
+public enum CharacterStateType { Move, Combat }

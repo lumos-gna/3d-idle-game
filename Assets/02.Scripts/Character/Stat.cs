@@ -1,14 +1,21 @@
+using UnityEngine.Events;
 
 public class Stat
 {
     public StatType type;
-    
-    public float curValue;
-    public float maxValue;
+    public float value;
+
+    public event UnityAction OnStatModified;
 
     public Stat(StatData data)
     {
-        type = data.type;
-        maxValue = data.baseValue;
+        value = data.baseValue;
+    }
+    
+    public void ModifyStatValue(float amount)
+    {
+        value += amount;
+        
+        OnStatModified?.Invoke();
     }
 }

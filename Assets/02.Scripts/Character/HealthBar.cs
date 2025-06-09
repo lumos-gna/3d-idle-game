@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +10,9 @@ public class HealthBar : MonoBehaviour
     private Image _barImage;
     private Camera _camera;
 
+    private Stat _currentHealth;
+    private Stat _maxHealth;
+
     private void Awake()
     {
         _barImage = GetComponent<Image>();
@@ -18,7 +22,22 @@ public class HealthBar : MonoBehaviour
     {
         _camera = Camera.main;
 
-        statHandler.OnStatModified += UpdateBar;
+        if (statHandler.TryGetStat(StatType.CurHealth, out Stat currentHealth))
+        {
+            _currentHealth = currentHealth;
+
+            _currentHealth.OnStatModified += UpdateBar;
+        }
+
+        if (statHandler.TryGetStat(StatType.MaxHealth, out Stat maxHealth))
+        {
+            _maxHealth = maxHealth;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        _currentHealth.OnStatModified -= UpdateBar;
     }
 
     private void LateUpdate()
@@ -26,11 +45,8 @@ public class HealthBar : MonoBehaviour
         transform.LookAt(transform.position + (_camera.transform.rotation * Vector3.forward));
     }
 
-    private void UpdateBar(Stat stat)
+    private void UpdateBar()
     {
-        if (stat.type == StatType.Health)
-        {
-            _barImage.fillAmount = stat.curValue / stat.maxValue;
-        }
+        _barImage.fillAmount = _currentHealth.value / _maxHealth.value;
     }
 }

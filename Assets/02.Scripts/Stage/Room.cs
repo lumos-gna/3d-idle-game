@@ -27,10 +27,10 @@ public class Room : MonoBehaviour
             {
                 for (int i = 0; i < _enemyList.Count; i++)
                 {
-                    _enemyList[i].Tracking(player);
+                    _enemyList[i].SetTargetPlayer(player);
                 }
                 
-                _player.ChangeStage(PlayerState.Combat);
+                _player.ChangeStage(CharacterStateType.Combat);
             }
             else
             {
@@ -72,7 +72,7 @@ public class Room : MonoBehaviour
         else
         {
             _player.CurrentRoom = nextRoom;
-            _player.ChangeStage(PlayerState.Move);
+            _player.ChangeStage(CharacterStateType.Move);
             
         }
     }
