@@ -5,6 +5,7 @@ using UnityEngine;
 public class UIManager : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI goldText;
+    [SerializeField] private TextMeshProUGUI stageText;
 
     public void UpdateGoldText(BigInteger amount)
     {
@@ -26,5 +27,10 @@ public class UIManager : MonoBehaviour
         string formatString = unitIndex == 0 ? "{0}" : "{0:0.#}{1}";
         
         goldText.text = string.Format(formatString, amount, units[unitIndex]);
+    }
+
+    public void UpdateStageText(int stageLevel)
+    {
+        stageText.text = (stageLevel + 1).ToString();
     }
 }

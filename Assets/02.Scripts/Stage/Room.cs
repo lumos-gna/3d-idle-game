@@ -6,11 +6,15 @@ public class Room : MonoBehaviour
     public List<Enemy> Enemies => _enemyList;
     
     
+    [SerializeField] private Collider triggerCollider;
+    
+
     private Stage _stage;
 
     private List<Enemy> _enemyList = new();
 
     private PlayerController _player;
+
 
 
     void OnTriggerEnter(Collider other)
@@ -38,6 +42,8 @@ public class Room : MonoBehaviour
     public void Init(Stage stage, List<EnemyData> enemyDataList)
     {
         _stage = stage;
+
+        triggerCollider.enabled = true;
 
         if (enemyDataList == null || enemyDataList.Count == 0)
             return;
@@ -82,12 +88,12 @@ public class Room : MonoBehaviour
             Enemy targetEnemy = Instantiate(randEnemyData.Prefab, _stage.transform);
             
             targetEnemy.Init(randEnemyData, this);
-
+            
             _enemyList.Add(targetEnemy);
 
-            if (randEnemyData.IsBoss)
+            if (targetEnemy.EnemyData.IsBoss)
             {
-                targetEnemy.transform.position = transform.position + Vector3.up;
+                targetEnemy.transform.position = transform.position;
 
                 return;
             }
@@ -98,15 +104,15 @@ public class Room : MonoBehaviour
                     var roomSize = _stage.StageData.RoomSize;
                 
                     spawnPos = new Vector2Int(
-                        Random.Range(roomSize.x/2 * -1 + 1, roomSize.x/2 - 1), 
-                        Random.Range(roomSize.y/2 * -1 + 1, roomSize.y/2 - 1));
-            
+                        Random.Range(roomSize.x/2 * -1 + 2, roomSize.x/2 - 2), 
+                        Random.Range(roomSize.y/2 * -1 + 2, roomSize.y/2 - 2));
                     
                     if (!_spawnedCells.Contains(spawnPos))
                     {
                         _spawnedCells.Add(spawnPos);
                 
-                        targetEnemy.transform.position = transform.position + new Vector3(spawnPos.x, 1, spawnPos.y);
+                        targetEnemy.transform.position = transform.position + new Vector3(spawnPos.x, 0, spawnPos.y);
+                    
                         break;
                     }
                 }

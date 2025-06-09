@@ -1,4 +1,6 @@
+using System.Collections;
 using System.Collections.Generic;
+using Unity.AI.Navigation;
 using UnityEngine;
 
 public class Stage : MonoBehaviour
@@ -14,7 +16,18 @@ public class Stage : MonoBehaviour
 
         CreateRooms(stageData, roomCells);
         
+        StartCoroutine(DelayToCreate(enemyDataList));
+    }
+
+    IEnumerator DelayToCreate(List<EnemyData> enemyDataList)
+    {
+        yield return null;
+                
+        GetComponent<NavMeshSurface>().BuildNavMesh();
+        
         InitRooms(enemyDataList);
+
+        GameManager.Instance.Player.Init();
     }
 
     public Room GetNextRoom(Room currentRoom)
@@ -29,7 +42,7 @@ public class Stage : MonoBehaviour
                 }
             }
         }
-
+        
         return null;
     }
 
@@ -54,7 +67,6 @@ public class Stage : MonoBehaviour
                 Vector2 centerPos = (Vector2)(roomCells[i + 1] + roomCells[i])  * 0.5f;
 
                 createPath.transform.position = new Vector3(centerPos.x, 0, centerPos.y) * (stageData.RoomSize.x + stageData.PathSize.x);
-         
          
                 Vector2 delta = roomCells[i + 1] - roomCells[i];
          

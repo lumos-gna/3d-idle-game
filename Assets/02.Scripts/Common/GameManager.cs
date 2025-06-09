@@ -31,6 +31,8 @@ public class GameManager : Singleton<GameManager>
         GameState.stageLevel = 0;
         
         StartStage(0);
+        
+        UIManager.UpdateGoldText(GameState.gold);
     }
 
     private void Update()
@@ -70,9 +72,7 @@ public class GameManager : Singleton<GameManager>
             
             StageManager.CreateStage(targetStageData, targetEnemyDataList);
             
-            Player.Init();
+            UIManager.UpdateStageText(targetStageData.Level);
         }
     }
-    
-
 }

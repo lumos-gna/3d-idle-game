@@ -4,21 +4,14 @@ using UnityEngine;
 
 public class StatHandler : MonoBehaviour
 {
-    [SerializeField] private StatData statData;
-
     private readonly Dictionary<StatType, float> _statDict = new();
 
-    private void Awake()
+    public void Init(StatData[] statDataList)
     {
-        InitializeStat();
-    }
-
-    void InitializeStat()
-    {
-        /*foreach (StatEntry entry in statData.Stats)
+        foreach (var stat in statDataList)
         {
-            _statDict[entry.type] = entry.value;
-        }*/
+            _statDict[stat.type] = stat.value;
+        }
     }
     
     public float GetStat(StatType statType)

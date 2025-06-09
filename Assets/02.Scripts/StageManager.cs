@@ -1,10 +1,9 @@
 using System.Collections.Generic;
-using Unity.AI.Navigation;
 using UnityEngine;
 
 public class StageManager : MonoBehaviour
 {
-   [SerializeField] private NavMeshSurface navSurface;
+   [SerializeField] private Stage stagePrefab;
 
    private Stage _currentStage;
 
@@ -17,13 +16,9 @@ public class StageManager : MonoBehaviour
       
       List<Vector2Int> roomCells = CreateRoomCells(stageData);
 
-      GameObject createObject = new GameObject("Stage");
-      
-      _currentStage = createObject.AddComponent<Stage>();
+      _currentStage = Instantiate(stagePrefab);
       
       _currentStage.Init(stageData, enemyDataList, roomCells);
-      
-      navSurface.BuildNavMesh();
    }
 
    private List<Vector2Int> CreateRoomCells(StageData stageData)

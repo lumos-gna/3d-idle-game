@@ -1,8 +1,13 @@
 
 public class PlayerMoveState : IPlayerState
 {
+    public void OnEnter(PlayerController player)
+    {
+        player.Agent.isStopped = false;
+    }
+
     public void OnUpdate(PlayerController player)
     {
-        player.UpdateMove(player.CurrentRoom.transform);
+        player.Agent.SetDestination(player.CurrentRoom.transform.position);
     }
 }
