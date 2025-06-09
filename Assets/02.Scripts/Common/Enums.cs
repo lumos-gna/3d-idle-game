@@ -10,3 +10,10 @@ public enum StatType
 }
 
 public enum CharacterStateType { Move, Combat }
+
+public enum ItemType
+{
+    Weapon,
+    Armor,
+    Consumable
+}

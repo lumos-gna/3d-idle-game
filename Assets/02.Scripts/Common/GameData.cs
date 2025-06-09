@@ -7,28 +7,8 @@ using UnityEngine;
 public class GameData : ScriptableObject
 {
     [field: SerializeField] public List<StageData> StageDatas { get; private set; }
-
     [field: SerializeField] public List<EnemyData> EnemyDatas { get; private set; }
-
-
-    /*
-    public StageData GetStageData(Func<StageData, bool> condition)
-    {
-       return StageDatas.Find((data) => condition(data));
-    }
-
-    public List<EnemyData> GetEnemyData(Func<EnemyData, bool> condition)
-    {
-        List<EnemyData> enemies = new();
-        
-        for (int index = 0; index < EnemyDatas.Count; index++)
-        {
-            if (condition(EnemyDatas[index]))
-            {
-                enemies.Add(EnemyDatas[index]);
-            }
-        }
-
-        return enemies;
-    }*/
+    
+    [field: SerializeField] public List<ItemData> ItemDatas { get; private set; }
+  
 }
