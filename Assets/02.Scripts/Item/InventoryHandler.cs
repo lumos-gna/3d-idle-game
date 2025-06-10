@@ -52,5 +52,24 @@ public class InventoryHandler : MonoBehaviour
         
         OnEquippedItem?.Invoke(equipItemData);
     }
-  
+
+    public List<ItemData> GetUnequipItemDatas(ItemType type)
+    {
+        if (_unequipItems.ContainsKey(type))
+        {
+            return _unequipItems[type];
+        }
+
+        return null;
+    }
+
+    public ItemData GetEquipItemData(ItemType type)
+    {
+        if (_equipItems.ContainsKey(type))
+        {
+            return _equipItems[type];
+        }
+
+        return null;
+    }
 }

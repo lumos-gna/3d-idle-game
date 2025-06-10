@@ -7,12 +7,12 @@ public class Room : MonoBehaviour
     
     
     [SerializeField] private Collider triggerCollider;
-    
+
 
     private Stage _stage;
 
     private List<Enemy> _enemyList = new();
-
+    
     private PlayerController _player;
 
 
@@ -39,17 +39,13 @@ public class Room : MonoBehaviour
         }
     }
 
-    public void Init(Stage stage, List<EnemyData> enemyDataList)
+    public void Init(Stage stage)
     {
         _stage = stage;
 
         triggerCollider.enabled = true;
-
-        if (enemyDataList == null || enemyDataList.Count == 0)
-            return;
-
-        CreateEnemies(enemyDataList);
     }
+    
     
     public void OnEnemyDeath(Enemy enemy)
     {
@@ -60,32 +56,16 @@ public class Room : MonoBehaviour
             ClearRoom();
         }
     }
-
-    private void ClearRoom()
-    {
-        var nextRoom = _stage.GetNextRoom(this);
-        
-        if (nextRoom == null)
-        {
-            GameManager.Instance.ClearedStage();
-        }
-        else
-        {
-            _player.CurrentRoom = nextRoom;
-            _player.ChangeStage(CharacterStateType.Move);
-            
-        }
-    }
-  
-    private void CreateEnemies(List<EnemyData> targetEnemyDatas)
+    
+    public void CreateEnemies(bool isBoss, StageEnemyInfo enemyInfo)
     {
         Vector2Int spawnPos = Vector2Int.zero;
 
         List<Vector2Int> _spawnedCells = new();
         
-        for (int index = 0; index < _stage.StageData.MaxNormalEnemyCount; index++)
+        for (int index = 0; index < enemyInfo.maxSpawnCount; index++)
         {
-            EnemyData randEnemyData = targetEnemyDatas[Random.Range(0, targetEnemyDatas.Count)];
+            EnemyData randEnemyData = enemyInfo.enemyDatas[Random.Range(0, enemyInfo.enemyDatas.Length)];
 
             Enemy targetEnemy = Instantiate(randEnemyData.Prefab, _stage.transform);
             
@@ -93,7 +73,7 @@ public class Room : MonoBehaviour
             
             _enemyList.Add(targetEnemy);
 
-            if (targetEnemy.EnemyData.IsBoss)
+            if (isBoss)
             {
                 targetEnemy.transform.position = transform.position;
 
@@ -122,5 +102,23 @@ public class Room : MonoBehaviour
         }
     }
 
+
+    private void ClearRoom()
+    {
+        var nextRoom = _stage.GetNextRoom(this);
+        
+        if (nextRoom == null)
+        {
+            GameManager.Instance.StartNextStage();
+        }
+        else
+        {
+            _player.CurrentRoom = nextRoom;
+            _player.ChangeStage(CharacterStateType.Move);
+            
+        }
+    }
+  
+ 
    
 }

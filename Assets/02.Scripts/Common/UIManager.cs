@@ -6,6 +6,8 @@ public class UIManager : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI goldText;
     [SerializeField] private TextMeshProUGUI stageText;
+    
+    [SerializeField] private StageResultUI stageResultUI;
 
     public void UpdateGoldText(BigInteger amount)
     {
@@ -32,5 +34,10 @@ public class UIManager : MonoBehaviour
     public void UpdateStageText(int stageLevel)
     {
         stageText.text = (stageLevel + 1).ToString();
+    }
+
+    public void ShowStageResult()
+    {
+        
     }
 }

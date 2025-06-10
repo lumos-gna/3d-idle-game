@@ -10,7 +10,6 @@ public class EnemyData : CharacterData
     [field: Header("Enemy")]
     [field: SerializeField] public int Level { get; private set; }
     [field: SerializeField] public int DropGold { get; private set; }
-    [field: SerializeField] public bool IsBoss { get; private set; }
     
     
     [field: Space(10f)]

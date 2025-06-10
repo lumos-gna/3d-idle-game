@@ -7,7 +7,7 @@ public class StageManager : MonoBehaviour
 
    private Stage _currentStage;
 
-   public void CreateStage(StageData stageData, List<EnemyData> enemyDataList)
+   public void CreateStage(StageData stageData)
    {
       if (_currentStage != null)
       {
@@ -18,7 +18,7 @@ public class StageManager : MonoBehaviour
 
       _currentStage = Instantiate(stagePrefab);
       
-      _currentStage.Init(stageData, enemyDataList, roomCells);
+      _currentStage.Init(stageData, roomCells);
    }
 
    private List<Vector2Int> CreateRoomCells(StageData stageData)

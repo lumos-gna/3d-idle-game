@@ -7,25 +7,26 @@ public class Stage : MonoBehaviour
 {
     public StageData StageData { get; private set; }
 
+
     private List<Room> _roomList = new();
 
 
-    public void Init(StageData stageData, List<EnemyData> enemyDataList, List<Vector2Int> roomCells)
+    public void Init(StageData stageData, List<Vector2Int> roomCells)
     {
         StageData = stageData;
 
         CreateRooms(stageData, roomCells);
         
-        StartCoroutine(DelayToCreate(enemyDataList));
+        StartCoroutine(DelayToCreate());
     }
 
-    IEnumerator DelayToCreate(List<EnemyData> enemyDataList)
+    IEnumerator DelayToCreate()
     {
         yield return null;
                 
         GetComponent<NavMeshSurface>().BuildNavMesh();
         
-        InitRooms(enemyDataList);
+        InitRooms();
 
         GameManager.Instance.Player.StartStage();
     }
@@ -78,38 +79,22 @@ public class Stage : MonoBehaviour
         }
     }
     
-    private void InitRooms(List<EnemyData> enemyDataList)
+    private void InitRooms()
     {
         for (int i = 0; i < _roomList.Count; i++)
         {
-            List<EnemyData> roomEnemyData = null;
+            _roomList[i].Init(this);
+
             
             if (i > 0)
             {
-                roomEnemyData = i < _roomList.Count - 1 ? 
-                    GetRoomEnemyDataList(false, enemyDataList) :
-                    GetRoomEnemyDataList(true, enemyDataList);
+                StageEnemyInfo enemyInfo = i < _roomList.Count - 1 ? 
+                    StageData.NormalEnemyInfos:
+                    StageData.BossEnemyInfos;
+
+                _roomList[i].CreateEnemies(i == _roomList.Count - 1, enemyInfo);
             }
 
-            _roomList[i].Init(this, roomEnemyData);
         }
     }
-    
-    private List<EnemyData> GetRoomEnemyDataList(bool isBoss, List<EnemyData> enemyDataList)
-    {
-        List<EnemyData> targetEnemytDatas = new();
-
-        for (int i = 0; i < enemyDataList.Count; i++)
-        {
-            if (enemyDataList[i].IsBoss == isBoss)
-            {
-                targetEnemytDatas.Add(enemyDataList[i]);
-            }
-        }
-
-        return targetEnemytDatas;
-    }
-    
-   
-
 }

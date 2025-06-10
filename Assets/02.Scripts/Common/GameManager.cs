@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -10,6 +11,9 @@ public class GameManager : Singleton<GameManager>
     public PlayerController Player { get; private set; }
     public StageManager StageManager { get; private set; }
     public UIManager UIManager { get; private set; }
+
+
+    public event UnityAction<int> OnStageCleared;
 
 
 
@@ -52,9 +56,20 @@ public class GameManager : Singleton<GameManager>
         
         UIManager.UpdateGoldText(GameState.gold);
     }
-
+    
+    
+    public void FailedStage()
+    {
+        StartStage(GameState.stageLevel);
+    }
 
     public void ClearedStage()
+    {
+        OnStageCleared?.Invoke(GameState.stageLevel);
+    }
+
+
+    public void StartNextStage()
     {
         var targetStageData = GameData.StageDatas.FirstOrDefault((data)=> data.Level == GameState.stageLevel + 1);
 
@@ -63,10 +78,7 @@ public class GameManager : Singleton<GameManager>
         StartStage(GameState.stageLevel);
     }
 
-    public void FailedStage()
-    {
-        StartStage(GameState.stageLevel);
-    }
+
 
     
     private void StartStage(int level)
@@ -75,9 +87,7 @@ public class GameManager : Singleton<GameManager>
 
         if (targetStageData != null)
         {
-            var targetEnemyDataList = GameData.EnemyDatas.FindAll((data) => data.Level == level);
-            
-            StageManager.CreateStage(targetStageData, targetEnemyDataList);
+            StageManager.CreateStage(targetStageData);
             
             UIManager.UpdateStageText(targetStageData.Level);
         }
