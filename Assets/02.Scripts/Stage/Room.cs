@@ -69,15 +69,9 @@ public class Room : MonoBehaviour
 
             Enemy targetEnemy = Instantiate(randEnemyData.Prefab, _stage.transform);
             
-            targetEnemy.Init(randEnemyData, this);
-            
-            _enemyList.Add(targetEnemy);
-
             if (isBoss)
             {
                 targetEnemy.transform.position = transform.position;
-
-                return;
             }
             else
             {
@@ -99,6 +93,10 @@ public class Room : MonoBehaviour
                     }
                 }
             }
+            
+            targetEnemy.Init(randEnemyData, this);
+            
+            _enemyList.Add(targetEnemy);
         }
     }
 
@@ -109,7 +107,7 @@ public class Room : MonoBehaviour
         
         if (nextRoom == null)
         {
-            GameManager.Instance.StartNextStage();
+            GameManager.Instance.ClearedStage();
         }
         else
         {

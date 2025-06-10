@@ -15,11 +15,11 @@ MonoBehaviour:
   <Name>k__BackingField: 
   <Stats>k__BackingField:
   - type: 0
-    baseValue: 100
+    baseValue: 1000
   - type: 1
-    baseValue: 100
+    baseValue: 1000
   - type: 2
-    baseValue: 10
+    baseValue: 100
   - type: 3
     baseValue: 1
   - type: 4

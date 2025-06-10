@@ -1,19 +1,19 @@
-using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class GameManager : Singleton<GameManager>
 {
-    public GameState GameState { get; private set; }
     [field: SerializeField] public GameData GameData { get; private set; }
 
     public PlayerController Player { get; private set; }
     public StageManager StageManager { get; private set; }
     public UIManager UIManager { get; private set; }
 
+    public int StageLevel { get; private set; }
 
-    public event UnityAction<int> OnStageCleared;
+    public BigInteger Gold { get; private set; }
 
 
 
@@ -28,54 +28,61 @@ public class GameManager : Singleton<GameManager>
         StageManager = GetComponentInChildren<StageManager>();
 
         UIManager = GetComponentInChildren<UIManager>();
-
-        GameState = new();
     }
 
     private void Start()
     {
-        GameState.stageLevel = 0;
+        StageLevel = 0;
         
         StartStage(0);
         
-        UIManager.UpdateGoldText(GameState.gold);
+        UIManager.UpdateGoldText(Gold);
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.A))
         {
-            StartStage(GameState.stageLevel);
+            ClearedStage();
         }
     }
 
 
     public void AddGold(int amount)
     {
-        GameState.gold += amount;
+        Gold += amount;
         
-        UIManager.UpdateGoldText(GameState.gold);
+        UIManager.UpdateGoldText(Gold);
     }
     
     
     public void FailedStage()
     {
-        StartStage(GameState.stageLevel);
+        StartStage(StageLevel);
     }
 
     public void ClearedStage()
     {
-        OnStageCleared?.Invoke(GameState.stageLevel);
+        var clearedStageData = GameData.StageDatas.FirstOrDefault((data)=> data.Level == StageLevel);
+
+        List<Item> items = GetRewardItems(clearedStageData);
+
+        for (int i = 0; i < items.Count; i++)
+        {
+            Player.Inventory.AddItem(items[i]);
+        }
+        
+        UIManager.ShowStageResult(items);
     }
 
 
     public void StartNextStage()
     {
-        var targetStageData = GameData.StageDatas.FirstOrDefault((data)=> data.Level == GameState.stageLevel + 1);
+        var targetStageData = GameData.StageDatas.FirstOrDefault((data)=> data.Level == StageLevel + 1);
 
-        GameState.stageLevel = targetStageData == null ? GameState.stageLevel : GameState.stageLevel + 1;
+        StageLevel = targetStageData == null ? StageLevel : StageLevel + 1;
         
-        StartStage(GameState.stageLevel);
+        StartStage(StageLevel);
     }
 
 
@@ -90,6 +97,23 @@ public class GameManager : Singleton<GameManager>
             StageManager.CreateStage(targetStageData);
             
             UIManager.UpdateStageText(targetStageData.Level);
+            
+            Player.InitState();
         }
+    }
+
+    List<Item> GetRewardItems(StageData clearedStageData)
+    {
+        List<Item> items = new();
+
+        for (int i = 0; i < clearedStageData.RewardInfos.Count; i++)
+        {
+            if (Random.value < clearedStageData.RewardInfos[i].dropChance)
+            {
+                items.Add(new(clearedStageData.RewardInfos[i].itemData));
+            }
+        }
+
+        return items;
     }
 }

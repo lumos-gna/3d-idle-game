@@ -6,15 +6,10 @@ public class StatusUIItemSlot : MonoBehaviour
 {
     [field: SerializeField] public ItemType ItemType { get; private set; }
 
-    private Button _button;
-
-    private void Awake()
-    {
-        _button = GetComponent<Button>();
-    }
+    [SerializeField] private Button button;
 
     public void Init(UnityAction<StatusUIItemSlot> onClickAction)
     {
-        _button.onClick.AddListener(()=>onClickAction?.Invoke(this));
+        button.onClick.AddListener(()=>onClickAction?.Invoke(this));
     }
 }

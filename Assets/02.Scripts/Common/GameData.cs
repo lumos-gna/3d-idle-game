@@ -8,7 +8,4 @@ public class GameData : ScriptableObject
 {
     [field: SerializeField] public List<StageData> StageDatas { get; private set; }
     [field: SerializeField] public List<EnemyData> EnemyDatas { get; private set; }
-    
-    [field: SerializeField] public List<ItemData> ItemDatas { get; private set; }
-  
 }

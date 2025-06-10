@@ -27,8 +27,6 @@ public class Stage : MonoBehaviour
         GetComponent<NavMeshSurface>().BuildNavMesh();
         
         InitRooms();
-
-        GameManager.Instance.Player.StartStage();
     }
 
     public Room GetNextRoom(Room currentRoom)

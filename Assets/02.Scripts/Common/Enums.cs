@@ -14,6 +14,5 @@ public enum CharacterStateType { Move, Combat }
 public enum ItemType
 {
     Weapon,
-    Armor,
-    Consumable
+    Armor
 }

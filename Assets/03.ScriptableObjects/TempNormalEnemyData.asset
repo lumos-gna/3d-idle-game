@@ -27,6 +27,5 @@ MonoBehaviour:
   - type: 5
     baseValue: 5
   <Level>k__BackingField: 0
-  <DropGold>k__BackingField: 1000000
-  <IsBoss>k__BackingField: 0
+  <DropGold>k__BackingField: 10
   <Prefab>k__BackingField: {fileID: 5665249406970616267, guid: e49cdd0b001a0204d8ad623eb3d331e7, type: 3}

@@ -3,10 +3,13 @@ using UnityEngine;
 
 public class PlayerController : CharacterController
 {
+    public Inventory Inventory { get; private set; }
+    
+
     [SerializeField] private CharacterData playerData;
+    
 
     private GameManager _gameManager;
-    private InventoryHandler _inventory;
 
     private Stat _curHealth;
     private Stat _maxHealth;
@@ -15,6 +18,9 @@ public class PlayerController : CharacterController
     protected override void Awake()
     {
         base.Awake();
+        
+        Inventory = GetComponent<Inventory>();
+
 
         StatHandler.Init(playerData.Stats);
         
@@ -58,19 +64,9 @@ public class PlayerController : CharacterController
     public void Init(GameManager gameManager)
     {
         _gameManager = gameManager;
-
-        _inventory = GetComponent<InventoryHandler>();
-
-        
-        var allItemDatas = gameManager.GameData.ItemDatas;
-
-        for (int i = 0; i < allItemDatas.Count; i++)
-        {
-            _inventory.AddItem(allItemDatas[i]);
-        }
     }
 
-    public void StartStage()
+    public void InitState()
     {
         NavAgent.enabled = false;
         

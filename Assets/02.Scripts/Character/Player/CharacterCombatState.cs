@@ -37,7 +37,7 @@ public class CharacterCombatState : CharacterState
                             if (_controller.StatHandler.TryGetStat(StatType.Damage, out Stat damage))
                             {
                                 target.TakeDamage(damage.value);
-
+                                
                                 _attackTimer = 0;
                             }
                         }

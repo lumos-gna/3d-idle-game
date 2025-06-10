@@ -10,6 +10,7 @@ public abstract class CharacterController : MonoBehaviour
     public StatHandler StatHandler { get; private set; }
     public Room CurrentRoom { get; set; }
     
+    
     protected Dictionary<CharacterStateType, CharacterState> _characterStates;
 
     protected CharacterState _currentState;
@@ -36,7 +37,7 @@ public abstract class CharacterController : MonoBehaviour
     protected abstract void Die();
 
     
-    public void TakeDamage(float damage)
+    public virtual void TakeDamage(float damage)
     {
         if (StatHandler.TryGetStat(StatType.CurHealth, out Stat currentHealth))
         {

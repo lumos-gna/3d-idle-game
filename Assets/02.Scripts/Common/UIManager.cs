@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Numerics;
 using TMPro;
 using UnityEngine;
@@ -13,7 +14,9 @@ public class UIManager : MonoBehaviour
     {
         if (amount < 1000)
         {
-            goldText.text = amount.ToString();
+            goldText.text = "Gold : " + amount;
+
+            return;
         }
 
         string[] units = { "", "k", "m", "b", "t", "q", "Q", "s", "S", "o", "n" };
@@ -28,16 +31,16 @@ public class UIManager : MonoBehaviour
 
         string formatString = unitIndex == 0 ? "{0}" : "{0:0.#}{1}";
         
-        goldText.text = string.Format(formatString, amount, units[unitIndex]);
+        goldText.text = "Gold : " + string.Format(formatString, amount, units[unitIndex]);
     }
 
     public void UpdateStageText(int stageLevel)
     {
-        stageText.text = (stageLevel + 1).ToString();
+        stageText.text = "Stage : " + (stageLevel + 1);
     }
 
-    public void ShowStageResult()
+    public void ShowStageResult(List<Item> rewardItems)
     {
-        
+        stageResultUI.Show(rewardItems);
     }
 }

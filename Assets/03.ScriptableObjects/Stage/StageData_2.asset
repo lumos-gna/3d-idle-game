@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ebb71b706c14053a6e53e2869829cea, type: 3}
+  m_Name: StageData_2
+  m_EditorClassIdentifier: 
+  <Level>k__BackingField: 1
+  <MaxRoomCount>k__BackingField: 4
+  <RoomSize>k__BackingField: {x: 30, y: 30}
+  <PathSize>k__BackingField: {x: 15, y: 15}
+  <RoomPrefab>k__BackingField: {fileID: 6818831243335150784, guid: 59ae3f7cbc90c924d9a6090d99836e43, type: 3}
+  <PathPrefab>k__BackingField: {fileID: 8017591335974890894, guid: 6e0ca870c6fbcb3468dfe8e04162a2de, type: 3}
+  <NormalEnemyInfos>k__BackingField:
+    maxSpawnCount: 4
+    enemyDatas:
+    - {fileID: 11400000, guid: 128942bb4f1173c45b08eb5e9e81c53f, type: 2}
+  <BossEnemyInfos>k__BackingField:
+    maxSpawnCount: 1
+    enemyDatas:
+    - {fileID: 11400000, guid: 72e622c431cd1a2428e633dc1a45301f, type: 2}
+  <RewardInfos>k__BackingField:
+  - dropChance: 1
+    itemData: {fileID: 11400000, guid: 6f26d3ec00c527044899992354024a2f, type: 2}
+  - dropChance: 0.3
+    itemData: {fileID: 11400000, guid: 1679b69fdb97708419fd968a52c4ceb9, type: 2}

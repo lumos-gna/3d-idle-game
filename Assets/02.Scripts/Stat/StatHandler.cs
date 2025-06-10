@@ -3,8 +3,10 @@ using UnityEngine;
 
 public class StatHandler : MonoBehaviour
 {
-    private Dictionary<StatType, Stat> _stats = new();
+    public Dictionary<StatType, Stat> Stats => _stats;
     
+    private Dictionary<StatType, Stat> _stats = new();
+
 
     public void Init(StatData[] statDatas)
     {
