@@ -5,8 +5,9 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
-    [field: SerializeField] public GameData GameData { get; private set; }
-
+    
+    [field: SerializeField] public StageData[] StageDatas { get; private set; }
+    
     public PlayerController Player { get; private set; }
     public StageManager StageManager { get; private set; }
     public UIManager UIManager { get; private set; }
@@ -14,6 +15,7 @@ public class GameManager : Singleton<GameManager>
     public int StageLevel { get; private set; }
 
     public BigInteger Gold { get; private set; }
+
 
 
 
@@ -65,7 +67,7 @@ public class GameManager : Singleton<GameManager>
 
     public void ClearedStage()
     {
-        var clearedStageData = GameData.StageDatas.FirstOrDefault((data)=> data.Level == StageLevel);
+        var clearedStageData =StageDatas.FirstOrDefault((data)=> data.Level == StageLevel);
 
         List<Item> items = GetRewardItems(clearedStageData);
 
@@ -80,7 +82,7 @@ public class GameManager : Singleton<GameManager>
 
     public void StartNextStage()
     {
-        var targetStageData = GameData.StageDatas.FirstOrDefault((data)=> data.Level == StageLevel + 1);
+        var targetStageData = StageDatas.FirstOrDefault((data)=> data.Level == StageLevel + 1);
 
         StageLevel = targetStageData == null ? StageLevel : StageLevel + 1;
         
@@ -92,7 +94,7 @@ public class GameManager : Singleton<GameManager>
     
     private void StartStage(int level)
     {
-        var targetStageData = GameData.StageDatas.FirstOrDefault((data) => data.Level == level);
+        var targetStageData = StageDatas.FirstOrDefault((data) => data.Level == level);
 
         if (targetStageData != null)
         {
