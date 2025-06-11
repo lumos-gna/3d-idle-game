@@ -1,13 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class InventoryUI : MonoBehaviour
 {
     public InventoryUISlot SelectedSlot { get; private set; }
     public InventoryUISlot EquippedSlot { get; private set; }
     
-    [SerializeField] private Inventory inventory;
     
     [SerializeField] private InventoryUIItemInfo inventoryItemInfo;
 
@@ -16,52 +14,67 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private Transform slotsParent;
     
     [SerializeField] private GameObject noItemsPannel;
-    
-    
+
+    [SerializeField] private PlayerController player;
+
+
+    public void Init()
+    {
+        player.Inventory.OnAddItem += (item) =>
+        {
+            if (gameObject.activeInHierarchy)
+            {
+                InitSlots(item.itemData.Type);
+            }
+        };
+    }
+
     public void Show(ItemType itemType)
     {
         gameObject.SetActive(true);
 
         InitSlots(itemType);
     }
-    
 
-    private void InitSlots(ItemType itemType)   
+    private void InitSlots(ItemType itemType)
     {
-        List<Item> items = inventory.GetItems(itemType);
-
-        if (items == null)
+        List<Item> targetItems = player.Inventory.items.FindAll((item) => item.itemData.Type == itemType);
+        
+        if (targetItems.Count == 0)
         {
             noItemsPannel.gameObject.SetActive(true);
             return;
         }
-
+        
+        noItemsPannel.gameObject.SetActive(false);
+        
         for (int i = 0; i < slotsParent.childCount; i++)
         {
             Destroy(slotsParent.GetChild(i).gameObject);
         }
 
-        for (int i = 0; i < items.Count; i++)
+        for (int i = 0; i < targetItems.Count; i++)
         {
             InventoryUISlot createdSlot =  Instantiate(slotPrefab, slotsParent);
             
-            createdSlot.Init(this, items[i]);
+            createdSlot.Init(this, targetItems[i]);
             
-            var equippedItem = inventory.GetEquippedItem(itemType);
+            var equippedItem = player.EquipmentHandler.GetItem(itemType);
 
             if (equippedItem != null)
             {
                 inventoryItemInfo.InitItemInfo(equippedItem, true);
-            }
-            
-            if (equippedItem == createdSlot.Item)
-            {
-                SelectSlot(createdSlot);
+                
+                if (equippedItem == createdSlot.Item)
+                {
+                    SelectSlot(createdSlot);
 
-                EquipSelectedSlotItem();
+                    EquipSelectedSlotItem();
+                }
             }
         }
     }
+  
     
 
     public void SelectSlot(InventoryUISlot slot)
@@ -75,8 +88,8 @@ public class InventoryUI : MonoBehaviour
         
         SelectedSlot.ToggleSelectedImage(true);
         
-        
-        var equippedItem = inventory.GetEquippedItem(slot.Item.itemData.Type);
+       
+        var equippedItem = player.EquipmentHandler.GetItem(slot.Item.itemData.Type);
             
         if (equippedItem == slot.Item)
         {
@@ -101,7 +114,7 @@ public class InventoryUI : MonoBehaviour
         EquippedSlot.ToggleEquippedImage(true);
         
         
-        inventory.EquipItem(EquippedSlot.Item);
+        player.EquipmentHandler.Equip(EquippedSlot.Item);
         
         inventoryItemInfo.InitItemInfo(EquippedSlot.Item, true);
     }
@@ -109,12 +122,15 @@ public class InventoryUI : MonoBehaviour
 
     public void SellSelectedSlotItem()
     {
-        SelectSlot(EquippedSlot);
+        var targetItem = SelectedSlot.Item;
         
-        SelectedSlot = EquippedSlot;
-        
-        inventory.SellItem(SelectedSlot.Item);
+        GameManager.Instance.AddGold(targetItem.itemData.Price);
+                
+        player.Inventory.RemoveItem(targetItem, 1);
         
         Destroy(SelectedSlot.gameObject);
+        
+        
+        SelectSlot(EquippedSlot);
     }
 }

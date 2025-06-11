@@ -9,6 +9,14 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI stageText;
     
     [SerializeField] private StageResultUI stageResultUI;
+    [SerializeField] private InventoryUI inventoryUI;
+    [SerializeField] private StatusUI statusUI;
+
+    public void Init()
+    {
+        inventoryUI.Init();
+        statusUI.Init();
+    }
 
     public void UpdateGoldText(BigInteger amount)
     {

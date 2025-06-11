@@ -6,9 +6,14 @@ using UnityEngine.TextCore.Text;
 
 public abstract class CharacterController : MonoBehaviour
 {
-    public NavMeshAgent NavAgent { get; private set; }
-    public StatHandler StatHandler { get; private set; }
+    public NavMeshAgent NavAgent => navAgent;
+    public StatHandler StatHandler => statHandler;
+    
     public Room CurrentRoom { get; set; }
+
+    
+    [SerializeField] private StatHandler statHandler;
+    [SerializeField] private NavMeshAgent navAgent;
     
     
     protected Dictionary<CharacterStateType, CharacterState> _characterStates;
@@ -17,9 +22,6 @@ public abstract class CharacterController : MonoBehaviour
 
     protected virtual void Awake()
     {
-        NavAgent = GetComponent<NavMeshAgent>();
-        StatHandler = GetComponent<StatHandler>();
-        
         _characterStates = new ()
         {
             { CharacterStateType.Move , new CharacterMoveState(this)},

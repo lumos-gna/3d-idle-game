@@ -1,20 +1,19 @@
 using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class StatusUI : MonoBehaviour
 {
     [SerializeField] private InventoryUI inventoryUI;
 
-    [SerializeField] private StatHandler statHandler;
+    [SerializeField] private PlayerController player;
     
     [SerializeField] private TextMeshProUGUI statText;
     
     private StatusUIItemSlot[] _itemSlots;
 
-
-    private void Awake()
+   
+    public void Init()
     {
         _itemSlots = GetComponentsInChildren<StatusUIItemSlot>();
         
@@ -22,6 +21,11 @@ public class StatusUI : MonoBehaviour
         {
             _itemSlots[i].Init(OnSelectedItemSlot);
         }
+
+        player.EquipmentHandler.OnEquip += (item) =>
+        {
+            UpdateInfo();
+        };
     }
 
 
@@ -29,9 +33,14 @@ public class StatusUI : MonoBehaviour
     {
         gameObject.SetActive(true);
 
+        UpdateInfo();
+    }
+
+    public void UpdateInfo()
+    {
         statText.text = "";
         
-        foreach (var stat in  statHandler.Stats)
+        foreach (var stat in  player.StatHandler.Stats)
         {
             switch (stat.Key)
             {

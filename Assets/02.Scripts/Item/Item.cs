@@ -3,11 +3,11 @@
 public class Item
 {
     public ItemData itemData;
-    public int count;
+    public int amount;
 
-    public Item(ItemData data, int count = 1)
+    public Item(ItemData data, int amount = 1)
     {
         itemData = data;
-        this.count = count;
+        this.amount = amount;
     }
 }

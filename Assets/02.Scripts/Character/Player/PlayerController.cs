@@ -1,26 +1,26 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : CharacterController
 {
     public Inventory Inventory { get; private set; }
+    public EquipmentHandler EquipmentHandler => equipmentHandler;
     
+    [SerializeField] private EquipmentHandler equipmentHandler;
 
     [SerializeField] private CharacterData playerData;
     
-
     private GameManager _gameManager;
-
     private Stat _curHealth;
     private Stat _maxHealth;
     
-    
-    protected override void Awake()
-    {
-        base.Awake();
-        
-        Inventory = GetComponent<Inventory>();
 
+    public void Init(GameManager gameManager)
+    {
+        _gameManager = gameManager;
+        
+        Inventory = new();
 
         StatHandler.Init(playerData.Stats);
         
@@ -33,8 +33,39 @@ public class PlayerController : CharacterController
                 _maxHealth = maxHealth;
             }
         }
+        
+        
+        Inventory.OnAddItem += (item) =>
+        {
+            if (equipmentHandler.GetItem(item.itemData.Type) == null)
+            {
+                equipmentHandler.Equip(item);
+            }
+        };
+
+        equipmentHandler.OnEquip += (item) =>
+        {
+            foreach (var itemStat in item.itemData.StatDatas)
+            {
+                if (StatHandler.TryGetStat(itemStat.type, out Stat stat))
+                {
+                    stat.ModifyStatValue(itemStat.baseValue);
+                }
+            }
+        };
+        
+        equipmentHandler.OnUnequip += (item) =>
+        {
+            foreach (var itemStat in item.itemData.StatDatas)
+            {
+                if (StatHandler.TryGetStat(itemStat.type, out Stat stat))
+                {
+                    stat.ModifyStatValue(itemStat.baseValue * -1);
+                }
+            }
+        };
     }
-    
+
     public override CharacterController GetTargetController()
     {
         Enemy closerEnemy = null;
@@ -61,10 +92,7 @@ public class PlayerController : CharacterController
         _gameManager.FailedStage();
     }
   
-    public void Init(GameManager gameManager)
-    {
-        _gameManager = gameManager;
-    }
+  
 
     public void InitState()
     {

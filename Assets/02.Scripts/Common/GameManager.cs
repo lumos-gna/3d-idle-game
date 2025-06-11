@@ -28,6 +28,8 @@ public class GameManager : Singleton<GameManager>
         StageManager = GetComponentInChildren<StageManager>();
 
         UIManager = GetComponentInChildren<UIManager>();
+        
+        UIManager.Init();
     }
 
     private void Start()
@@ -69,7 +71,7 @@ public class GameManager : Singleton<GameManager>
 
         for (int i = 0; i < items.Count; i++)
         {
-            Player.Inventory.AddItem(items[i]);
+            Player.Inventory.AddItemToUnlimit(items[i].itemData, 1);
         }
         
         UIManager.ShowStageResult(items);

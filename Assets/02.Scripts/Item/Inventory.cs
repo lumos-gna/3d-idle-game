@@ -1,128 +1,107 @@
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Inventory : MonoBehaviour
+public class Inventory
 {
-    private Dictionary<ItemType, List<Item>> _totalItems = new();
-    
-    private Dictionary<ItemType, Item> _equippedItems = new();
+    public int maxSlots = 20;
+    public List<Item> items = new();
 
+    public event UnityAction<Item> OnAddItem;
+    public event UnityAction<Item> OnRemoveitem;
 
-    private GameManager _gameManager;
-    private StatHandler _statHandler;
     
-    
-    private void Awake()
+    public void AddItem(ItemData itemData, int amount, out int remainAmount)
     {
-        _gameManager = GameManager.Instance;
+        var targetSlots = items.FindAll((slot) => slot.itemData == itemData);
 
-        _statHandler = GetComponent<StatHandler>();
-    }
+        targetSlots = targetSlots.OrderByDescending(slot => slot.amount).ToList();
 
-
-    public void AddItem(Item item)
-    {
-        ItemType itemType = item.itemData.Type;
-        
-        if (!_totalItems.ContainsKey(itemType))
+        foreach (var slot in targetSlots)
         {
-            _totalItems[itemType] = new();
-
-            EquipItem(item);
-        }
-        
-        _totalItems[itemType].Add(item);
-    }
-    
-    
-    public void RemoveItem(Item item)
-    {
-        ItemType itemType = item.itemData.Type;
-        
-        if (_totalItems.ContainsKey(itemType))
-        {
-            if (item.count > 1)
+            if (slot.amount < itemData.MaxStack)
             {
-                item.count--;
-
-                return;
-            }
-            
-            _totalItems[itemType].Remove(item);
-
-            if (_equippedItems[itemType] == item)
-            {
-                _equippedItems[itemType] = null;
-            }
-        }
-    }
-
-    public void EquipItem(Item item)
-    {
-        ItemType itemType = item.itemData.Type;
-
-        if (_equippedItems.ContainsKey(itemType))
-        {
-            StatData[] removeStatDatas = _equippedItems[itemType].itemData.StatDatas;
-            
-            for (int i = 0; i < removeStatDatas.Length; i++)
-            {
-                if (_statHandler.TryGetStat(removeStatDatas[i].type, out Stat stat))
-                {
-                    stat.ModifyStatValue(removeStatDatas[i].baseValue * -1);
-                }
-            }
-        }
-        
-        _equippedItems[itemType] = item;
-        
-        StatData[] addStatDatas = _equippedItems[itemType].itemData.StatDatas;
-            
-        for (int i = 0; i < addStatDatas.Length; i++)
-        {
-            if (_statHandler.TryGetStat(addStatDatas[i].type, out Stat stat))
-            {
-                stat.ModifyStatValue(addStatDatas[i].baseValue);
-            }
-        }
-    }
-    
-
-    public void SellItem(Item item)
-    {
-        _gameManager.AddGold(item.itemData.Price);
+                int addSpace = itemData.MaxStack - slot.amount;
                 
-
-        RemoveItem(item);
-    }
-
-
-    public List<Item> GetItems(ItemType type)
-    {
-        List<Item> items = null;
-
-        if (_totalItems.ContainsKey(type))
-        {
-            if (_totalItems[type].Count > 0)
-            {
-                items = _totalItems[type];
+                int addAmount = Mathf.Min(addSpace, amount);
+                
+                slot.amount += addAmount;
+                
+                amount -= addAmount;
+                
+                OnAddItem?.Invoke(slot);
             }
         }
         
-        return items;
-    }
-
-    public Item GetEquippedItem(ItemType type)
-    {
-        Item item = null;
-        
-        if (_equippedItems.ContainsKey(type))
+        while (amount > 0 && items.Count < maxSlots)
         {
-            item = _equippedItems[type];
+            int addAmount = Mathf.Min(itemData.MaxStack, amount);
+            
+            var newSlot = new Item(itemData, addAmount);
+
+            items.Add(newSlot);
+            
+            amount -= addAmount;
+
+            OnAddItem?.Invoke(newSlot);
         }
         
-        return item;
+        remainAmount = amount;
+    }
+
+    public void AddItemToUnlimit(ItemData itemData, int amount)
+    {
+        var targetSlots = items.FindAll((slot) => slot.itemData == itemData);
+
+        targetSlots = targetSlots.OrderByDescending(slot => slot.amount).ToList();
+
+        foreach (var slot in targetSlots)
+        {
+            if (slot.amount < itemData.MaxStack)
+            {
+                int addSpace = itemData.MaxStack - slot.amount;
+                
+                int addAmount = Mathf.Min(addSpace, amount);
+                
+                slot.amount += addAmount;
+                
+                amount -= addAmount;
+                
+                OnAddItem?.Invoke(slot);
+            }
+        }
+        
+        while (amount > 0)
+        {
+            int addAmount = Mathf.Min(itemData.MaxStack, amount);
+            
+            var newSlot = new Item(itemData, addAmount);
+
+            items.Add(newSlot);
+            
+            amount -= addAmount;
+
+            OnAddItem?.Invoke(newSlot);
+        }
+    }
+    
+   
+
+    public void RemoveItem(Item targetSlot, int amount)
+    {
+        if (targetSlot == null || !items.Contains(targetSlot))
+            return;
+
+        int removeAmount = Mathf.Min(targetSlot.amount, amount);
+        
+        targetSlot.amount -= removeAmount;
+        
+        OnRemoveitem?.Invoke(targetSlot);
+
+        if (targetSlot.amount == 0)
+        {
+            items.Remove(targetSlot);
+        }
     }
 }

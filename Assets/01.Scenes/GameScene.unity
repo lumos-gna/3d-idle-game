@@ -183,7 +183,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inventoryUI: {fileID: 974583407}
-  statHandler: {fileID: 1933481587}
+  player: {fileID: 1933481582}
   statText: {fileID: 641305214}
 --- !u!1 &81371284
 GameObject:
@@ -973,6 +973,8 @@ MonoBehaviour:
   goldText: {fileID: 415955601}
   stageText: {fileID: 1201671676}
   stageResultUI: {fileID: 2110995303}
+  inventoryUI: {fileID: 974583407}
+  statusUI: {fileID: 79959476}
 --- !u!1 &634388422
 GameObject:
   m_ObjectHideFlags: 0
@@ -2197,11 +2199,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8876b31f50a510a4380004dbd5854f90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventory: {fileID: 1933481592}
   inventoryItemInfo: {fileID: 1482333465}
   slotPrefab: {fileID: 1162275688528274546, guid: 845f33dbed9810949a9a8bb27f4754c8, type: 3}
   slotsParent: {fileID: 1959538799}
   noItemsPannel: {fileID: 977921412}
+  player: {fileID: 1933481582}
 --- !u!1 &977921412
 GameObject:
   m_ObjectHideFlags: 0
@@ -3932,6 +3934,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0072e1676ceab8348bac5c2251529135, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  statHandler: {fileID: 1933481587}
+  navAgent: {fileID: 1933481589}
+  equipmentHandler: {fileID: 1933481592}
   playerData: {fileID: 11400000, guid: 00d71de4e82ba1c478214a91c45135cd, type: 2}
 --- !u!23 &1933481584
 MeshRenderer:
@@ -4092,7 +4097,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1933481581}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 501d83d0834342a4bd30cabe1f47e944, type: 3}
+  m_Script: {fileID: 11500000, guid: 979fb47d34fa433aac7ce871e47446a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1950947278
